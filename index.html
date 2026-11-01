@@ -39,7 +39,7 @@ function finish(auto){if(rec&&rec.state==='recording')recordStop();if(tick)clear
 function autoScore(a){let n=0;for(let s of parts)for(let q of state.questions[s.id]||[])if(q.type==='mcq'&&a.answers?.[q.id]===Number(q.answer))n+=Number(q.points||1);return n}
 function totalMark(a){let n=autoScore(a);for(let s of parts)for(let q of state.questions[s.id]||[])if(q.type!=='mcq')n+=Number(a.marks?.[q.id]||0);return n}
 function adminTab(t){tab=t;render()}
-function addQuestion(){let s=draft.section,q={...draft,id:uid(),points:Number(draft.points)||1};if(!q.prompt.trim()||!q.question.trim()){toast('Titel und Aufgabenstellung fehlen.');return}if(q.type==='mcq'&&q.options.some(x=>!x.trim())){toast('Bitte alle drei Antwortmöglichkeiten ausfüllen.');return}state.questions[s].push(q);save();draft={...draft,prompt:'',question:''};render();toast('Aufgabe hinzugefügt.')}
+function addQuestion(){let s=draft.section,q={...draft,id:uid(),points:Number(draft.points)||1};if(!q.prompt.trim()||!q.question.trim()){toast('Titel und Aufgabenstellung fehlen.');return}if(q.type==='mcq'&&q.options.slice(0,2).some(x=>!x.trim())){toast('Bitte mindestens zwei Antwortmöglichkeiten ausfüllen.');return}q.options=q.options.filter(x=>x.trim());state.questions[s].push(q);save();draft={...draft,prompt:'',question:''};render();toast('Aufgabe hinzugefügt.')}
 function delQuestion(s,id){if(!confirm('Aufgabe löschen?'))return;state.questions[s]=state.questions[s].filter(q=>q.id!==id);save();render()}
 async function uploadAudio(id,file){if(!file)return;await put('question-'+id,file);toast('Hördatei gespeichert.')}
 function mark(id,qid,v){let a=state.attempts.find(x=>x.id===id);a.marks[qid]=Math.max(0,Number(v)||0);save()}
