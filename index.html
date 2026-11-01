@@ -58,5 +58,5 @@ function jumpPart(i){if(i>part)return;part=i;qi=0;remaining=parts[i].time*60;per
 function prevQ(){if(qi>0){qi--;persist();render()}else if(part>0){part--;qi=Math.max(0,questions().length-1);remaining=parts[part].time*60;persist();runTimer();render()}}
 function confirmFinish(){if(confirm('Prüfung jetzt abgeben?'))finish(false)}
 function render(){let app=document.getElementById('app');if(screen==='home')app.innerHTML=renderHome();else if(screen==='exam')app.innerHTML=renderExam();else if(screen==='result')app.innerHTML='<div class="result"><div class="resulticon">✓</div><span class="kicker">PRÜFUNG ABGEGEBEN</span><h1>Sehr gut gemacht.</h1><p>Deine Antworten und Sprachaufnahmen wurden auf diesem Gerät gespeichert. Die Prüfungsleitung kann deine Antworten im Admin-Bereich prüfen und bewerten.</p><button class="primary" onclick="home()">Zur Startseite →</button></div>';else if(screen==='admin')app.innerHTML=adminRender()}
-render();
+if(state.activeAttempt){attempt=state.activeAttempt.attempt;answers=state.activeAttempt.answers||{};written=state.activeAttempt.written||{};recorded=state.activeAttempt.recorded||{};part=state.activeAttempt.part||0;qi=state.activeAttempt.qi||0;remaining=state.activeAttempt.remaining||parts[part].time*60;screen='exam';runTimer()}render();
 </script></body></html>
