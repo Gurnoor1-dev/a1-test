@@ -37,7 +37,7 @@ function nextQ(){if(qi<questions().length-1){qi++;persist();render()}else advanc
 function advancePart(auto){if(part<3){part++;qi=0;remaining=parts[part].time*60;persist();runTimer();render()}else finish(auto)}
 function finish(auto){if(rec&&rec.state==='recording')recordStop();if(tick)clearInterval(tick);attempt.answers={...answers};attempt.written={...written};attempt.finished=new Date().toISOString();attempt.auto=auto;state.attempts.unshift(attempt);state.activeAttempt=null;save();attempt=null;screen='result';render();toast(auto?'Zeit abgelaufen. Antworten gespeichert.':'Prüfung abgegeben.')}
 function autoScore(a){let n=0;for(let s of parts)for(let q of state.questions[s.id]||[])if(q.type==='mcq'&&a.answers?.[q.id]===Number(q.answer))n+=Number(q.points||1);return n}
-function totalMark(a){return Object.values(a.marks||{}).reduce((x,y)=>x+Number(y||0),0)}
+function totalMark(a){let n=autoScore(a);for(let s of parts)for(let q of state.questions[s.id]||[])if(q.type!=='mcq')n+=Number(a.marks?.[q.id]||0);return n}
 function adminTab(t){tab=t;render()}
 function addQuestion(){let s=draft.section,q={...draft,id:uid(),points:Number(draft.points)||1};if(!q.prompt.trim()||!q.question.trim()){toast('Titel und Aufgabenstellung fehlen.');return}if(q.type==='mcq'&&q.options.some(x=>!x.trim())){toast('Bitte alle drei Antwortmöglichkeiten ausfüllen.');return}state.questions[s].push(q);save();draft={...draft,prompt:'',question:''};render();toast('Aufgabe hinzugefügt.')}
 function delQuestion(s,id){if(!confirm('Aufgabe löschen?'))return;state.questions[s]=state.questions[s].filter(q=>q.id!==id);save();render()}
